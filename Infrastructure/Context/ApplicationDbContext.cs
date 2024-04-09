@@ -1,7 +1,4 @@
-﻿using Infrastructure.Models;
-using System.Linq;
-
-namespace Infrastructure.Context;
+﻿namespace Infrastructure.Context;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser, 
     ApplicationRole, string, 

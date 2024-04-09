@@ -1,7 +1,4 @@
-﻿using Infrastructure.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Infrastructure.Context.DbConfig;
+﻿namespace Infrastructure.Context.DbConfig;
 
 internal class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
 {
