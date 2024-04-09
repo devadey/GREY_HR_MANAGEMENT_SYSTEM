@@ -1,4 +1,7 @@
-﻿namespace WebApi;
+﻿using Microsoft.AspNetCore.Identity;
+using WebApi.Permissions;
+
+namespace WebApi;
 
 public static class ServiceCollectionExtensions
 {
@@ -18,6 +21,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddIdentitySettings(this IServiceCollection services)
     {
         services
+            .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
+            .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>()
             .AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 options.Password.RequiredLength = 6;
@@ -27,7 +32,8 @@ public static class ServiceCollectionExtensions
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequireNonAlphanumeric = false;
             })
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
         return services;
     }

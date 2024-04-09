@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Context.DbConfig;
+﻿namespace Infrastructure.DbConfig;
 
 internal class EmployeeEntityConfig : IEntityTypeConfiguration<Employee>
 {

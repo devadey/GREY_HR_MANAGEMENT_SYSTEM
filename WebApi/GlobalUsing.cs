@@ -1,7 +1,13 @@
-﻿global using WebApi;
+﻿global using System;
+global using WebApi;
+global using System.Linq;
 global using Infrastructure;
 global using Infrastructure.Models;
+global using System.Threading.Tasks;
 global using Infrastructure.Context;
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.Extensions.Hosting;
+global using Common.Authorization;
+global using Microsoft.Extensions.Options;
+global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.Extensions.DependencyInjection;

@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Context.DbConfig;
+﻿namespace Infrastructure.DbConfig;
 
 internal static class SchemaNames
 {

@@ -1,4 +1,6 @@
-﻿namespace Common.Authorization;
+﻿using System.Linq;
+
+namespace Common.Authorization;
 
 public record AppPermission(string Feature, string Action, string Group, string Description, bool IsBasic=false)
 {

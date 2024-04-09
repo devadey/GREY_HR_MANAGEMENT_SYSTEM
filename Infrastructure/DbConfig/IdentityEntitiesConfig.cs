@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Context.DbConfig;
+﻿namespace Infrastructure.DbConfig;
 
 internal class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
 {
@@ -6,7 +6,7 @@ internal class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
     {
         builder
             .ToTable("Users", SchemaNames.Security);
-            
+
     }
 }
 
@@ -29,7 +29,7 @@ internal class ApplicationRoleClaimConfig : IEntityTypeConfiguration<Application
 
     }
 }
-    internal class IdentityUserClaimConfig : IEntityTypeConfiguration<IdentityUserClaim<string>>
+internal class IdentityUserClaimConfig : IEntityTypeConfiguration<IdentityUserClaim<string>>
 {
     public void Configure(EntityTypeBuilder<IdentityUserClaim<string>> builder)
     {

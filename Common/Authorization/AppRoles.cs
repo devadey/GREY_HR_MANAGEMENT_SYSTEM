@@ -1,4 +1,6 @@
-﻿namespace Common.Authorization;
+﻿using System.Linq;
+
+namespace Common.Authorization;
 
 public static class AppRoles
 {
