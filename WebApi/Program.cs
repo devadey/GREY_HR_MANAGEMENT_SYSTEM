@@ -7,10 +7,12 @@ builder.Services.AddControllers();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentitySettings();
 builder.Services.RegisterMediatR();
-builder.Services.AddJWTAuthentication(builder.Services.GetAppConfigurationSettings(builder.Configuration));
-builder.Services.RegisterSwagger();
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddJwtAuthentication(builder.Services.GetApplicationSettings(builder.Configuration));
+builder.Services.AddIdentityServices();
 
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.RegisterSwagger();
 
 var app = builder.Build();
 

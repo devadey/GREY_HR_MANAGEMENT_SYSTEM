@@ -2,22 +2,21 @@
 
 public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
-    public PermissionAuthorizationHandler()
-    {
-        
-    }
+    public PermissionAuthorizationHandler() { }
 
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        PermissionRequirement requirement)
     {
         if (context.User is null)
+        {
             await Task.CompletedTask;
+        }
 
-        var permission = context.User.Claims
+        var permissions = context.User.Claims
             .Where(claim => claim.Type == AppClaim.Permission
-            && claim.Value == requirement.Permission
-            && claim.Issuer == "LOCAL AUTHORITY");
-
-        if (permission.Any())
+                && claim.Value == requirement.Permission
+                && claim.Issuer == "LOCAL AUTHORITY");
+        if (permissions.Any())
         {
             context.Succeed(requirement);
             await Task.CompletedTask;

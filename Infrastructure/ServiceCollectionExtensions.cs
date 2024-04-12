@@ -1,4 +1,6 @@
-﻿namespace Infrastructure;
+﻿using Infrastructure.Services.Identity;
+
+namespace Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
@@ -11,6 +13,14 @@ public static class ServiceCollectionExtensions
             options.UseSqlServer(connection);
         });
        
+        return services;
+    }
+
+
+    public static IServiceCollection AddIdentityServices(this IServiceCollection services)
+    {
+        services
+            .AddTransient<ITokenService, TokenService>();
         return services;
     }
 }

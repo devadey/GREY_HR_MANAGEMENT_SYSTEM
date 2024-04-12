@@ -18,16 +18,16 @@ namespace WebApi;
 
 public static class ServiceCollectionExtensions
 {
-    public static IApplicationBuilder SeedDatabase(this IApplicationBuilder app)
+    internal static IApplicationBuilder SeedDatabase(this IApplicationBuilder app)
     {
-        var scope = app.ApplicationServices.CreateScope();
-        var seeders = scope.ServiceProvider.GetServices<ApplicationDbSeeder>();
+        using var serviceScope = app.ApplicationServices.CreateScope();
+
+        var seeders = serviceScope.ServiceProvider.GetServices<ApplicationDbSeeder>();
 
         foreach (var seeder in seeders)
         {
-            seeder.SeedDataAsync().GetAwaiter().GetResult();
+            seeder.SeedDatabaseAsync().GetAwaiter().GetResult();
         }
-
         return app;
     }
 
@@ -41,26 +41,25 @@ public static class ServiceCollectionExtensions
                 options.Password.RequiredLength = 6;
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.User.RequireUniqueEmail = true;
-                options.Password.RequireNonAlphanumeric = false;
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
-
         return services;
     }
 
-
-    internal static IServiceCollection AddJWTAuthentication(this IServiceCollection services, AppConfiguration configuration)
+    internal static IServiceCollection AddJwtAuthentication(this IServiceCollection services, AppConfiguration config)
     {
-        var key = Encoding.ASCII.GetBytes(configuration.Secret);
+        var key = Encoding.ASCII.GetBytes(config.Secret);
         services
-            .AddAuthentication(Authentication =>
+            .AddAuthentication(authentication =>
             {
-                Authentication.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                Authentication.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(bearer =>
+                authentication.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authentication.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(bearer =>
             {
                 bearer.RequireHttpsMetadata = false;
                 bearer.SaveToken = true;
@@ -89,7 +88,7 @@ public static class ServiceCollectionExtensions
                         {
                             c.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                             c.Response.ContentType = "application/json";
-                            var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("An unhandled error has occured."));
+                            var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("An unhandled error has occurred."));
                             return c.Response.WriteAsync(result);
                         }
                     },
@@ -100,21 +99,22 @@ public static class ServiceCollectionExtensions
                         {
                             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                             context.Response.ContentType = "application/json";
-                            var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("You are not authorized."));
+                            var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("You are not Authorized."));
                             return context.Response.WriteAsync(result);
                         }
+
                         return Task.CompletedTask;
                     },
                     OnForbidden = context =>
                     {
-
                         context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                         context.Response.ContentType = "application/json";
-                        var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("You are not authorized to access this resouce."));
+                        var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("You are not authorized to access this resource."));
                         return context.Response.WriteAsync(result);
-                    }
+                    },
                 };
             });
+
         services.AddAuthorization(options =>
         {
             foreach (var prop in typeof(AppPermissions).GetNestedTypes().SelectMany(c => c.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)))
@@ -126,18 +126,18 @@ public static class ServiceCollectionExtensions
                 }
             }
         });
-
-        return services;
+        return null;
     }
 
-    internal static AppConfiguration GetAppConfigurationSettings(this IServiceCollection services, IConfiguration configuration)
+    internal static AppConfiguration GetApplicationSettings(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        var appConfig = configuration.GetSection(nameof(AppConfiguration));
-        services.Configure<AppConfiguration>(appConfig);
-        return appConfig.Get<AppConfiguration>();
+        var applicationSettingsConfiguration = configuration.GetSection(nameof(AppConfiguration));
+        services.Configure<AppConfiguration>(applicationSettingsConfiguration);
+        return applicationSettingsConfiguration.Get<AppConfiguration>();
     }
 
-    internal static IServiceCollection RegisterSwagger(this IServiceCollection services)
+    internal static void RegisterSwagger(this IServiceCollection services)
     {
         services.AddSwaggerGen(options =>
         {
@@ -148,38 +148,35 @@ public static class ServiceCollectionExtensions
                 Type = SecuritySchemeType.ApiKey,
                 Scheme = JwtBearerDefaults.AuthenticationScheme,
                 BearerFormat = "JWT",
-                Description = "Input your Bearer token in this format - Bearer (your token here) to access this API resource."
+                Description = "Input your Bearer token in this format - Bearer {your token here} to access this API",
             });
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
                 {
-                    new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference
+                        new OpenApiSecurityScheme
                         {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = JwtBearerDefaults.AuthenticationScheme,
-                        },
-                        Scheme = JwtBearerDefaults.AuthenticationScheme,
-                        Name = JwtBearerDefaults.AuthenticationScheme,
-                        In = ParameterLocation.Header,
-                    }, new List<string>()
-                },
-            });
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = JwtBearerDefaults.AuthenticationScheme
+                            },
+                            Scheme = JwtBearerDefaults.AuthenticationScheme,
+                            Name = JwtBearerDefaults.AuthenticationScheme,
+                            In = ParameterLocation.Header,
+                        }, new List<string>()
+                    },
+                });
 
             options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
-                Title = "GREY HR MANAGEMENT SYSTEM",
+                Title = "GREYHR MANAGEMENT SYSTEM",
                 License = new OpenApiLicense
                 {
                     Name = "MIT License",
-                    Url = new Uri("https://opensource/org/licenses/MIT")
+                    Url = new Uri("https://opensource.org/licenses/MIT")
                 }
             });
-
         });
-
-        return services;
     }
 }

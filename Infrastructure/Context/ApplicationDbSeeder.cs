@@ -15,11 +15,11 @@ public class ApplicationDbSeeder
         _dbContext = dbContext;
     }
 
-    public async Task SeedDataAsync() 
+    public async Task SeedDatabaseAsync() 
     {
         await CheckAndApplyPendingMigrationsAsync();
         await SeedRolesAsync();
-        SeedAdminToDatabaseAsync().GetAwaiter().GetType();
+        SeedAdminToDatabaseAsync().GetAwaiter().GetResult();
     //Seed Roles
 
     }
