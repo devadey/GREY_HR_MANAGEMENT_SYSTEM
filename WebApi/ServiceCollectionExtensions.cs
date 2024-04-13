@@ -3,6 +3,7 @@ using Common.Responses.Wrappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -52,7 +53,7 @@ public static class ServiceCollectionExtensions
 
     internal static IServiceCollection AddJwtAuthentication(this IServiceCollection services, AppConfiguration config)
     {
-        var key = Encoding.ASCII.GetBytes(config.Secret);
+        var key = Encoding.UTF8.GetBytes(config.Secret);
         services
             .AddAuthentication(authentication =>
             {
@@ -178,5 +179,15 @@ public static class ServiceCollectionExtensions
                 }
             });
         });
+    }
+
+    internal static IServiceCollection AddAuthWithControllers (this IServiceCollection services)
+    {
+        services.AddControllers(option =>
+        {
+            var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+            option.Filters.Add(new AuthorizeFilter(policy));
+        });
+        return services;
     }
 }

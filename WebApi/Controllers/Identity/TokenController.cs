@@ -1,6 +1,6 @@
 ﻿using Application.Features.Identity.Queries;
 using Application.Services.Identity;
-using Common.Requests;
+using Common.Requests.Identity;
 using MediatR;
 
 namespace WebApi.Controllers.Identity;
@@ -33,7 +33,6 @@ public class TokenController:BaseController<TokenController>
 
 
     [HttpPost("get-refresh-token")]
-    [AllowAnonymous]
     public async Task<IActionResult> GetRefreshTokenAsync([FromBody] RefreshTokenRequest refreshTokenRequest)
     {
         var response = await sender.Send(new GetRefreshTokenQuery { RefreshTokenRequest = refreshTokenRequest });

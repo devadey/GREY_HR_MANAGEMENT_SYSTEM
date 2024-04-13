@@ -1,4 +1,6 @@
-﻿using Infrastructure.Services.Identity;
+﻿using Application.Services;
+using Infrastructure.Services;
+using Infrastructure.Services.Identity;
 
 namespace Infrastructure;
 
@@ -20,7 +22,16 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddIdentityServices(this IServiceCollection services)
     {
         services
-            .AddTransient<ITokenService, TokenService>();
+            .AddTransient<ITokenService, TokenService>()
+            .AddTransient<IUserService, UserService>();
+        return services;
+    }
+
+
+    public static IServiceCollection AddEmployeeService (this IServiceCollection services)
+    {
+        services
+            .AddTransient<IEmployeeService, EmployeeService>();
         return services;
     }
 }

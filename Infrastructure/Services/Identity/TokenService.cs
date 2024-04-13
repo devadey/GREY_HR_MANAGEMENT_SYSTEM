@@ -1,4 +1,6 @@
-﻿namespace Infrastructure.Services.Identity
+﻿using Common.Requests.Identity;
+
+namespace Infrastructure.Services.Identity
 {
     public class TokenService : ITokenService
     {

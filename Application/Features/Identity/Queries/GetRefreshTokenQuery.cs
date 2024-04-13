@@ -1,4 +1,6 @@
 ﻿
+using Common.Requests.Identity;
+
 namespace Application.Features.Identity.Queries
 {
     public class GetRefreshTokenQuery:IRequest<IResponseWrapper>
