@@ -24,4 +24,29 @@ public class UsersController : BaseController<UsersController>
         }
         return BadRequest(response);
     }
+
+
+    [HttpGet("{userId}")]
+    public async Task<IActionResult> GetUserById([FromRoute] string userId)
+    {
+        var response = await _sender.Send(new GetUserByIdQuery { UserId = userId });
+
+        if (response.IsSuccessful)
+        {
+            return Ok(response);
+        }
+        return BadRequest(response);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllUsers()
+    {
+        var response = await _sender.Send(new GetAllUsersQuery());
+
+        if (response.IsSuccessful)
+        {
+            return Ok(response);
+        }
+        return BadRequest(response);
+    }
 }
