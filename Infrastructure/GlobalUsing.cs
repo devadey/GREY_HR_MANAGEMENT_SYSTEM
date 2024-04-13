@@ -2,14 +2,16 @@
 global using System;
 global using System.Text;
 global using System.Linq;
-global using Common.Requests;
 global using Common.Responses;
+global using Application.Services;
 global using Common.Authorization;
 global using Infrastructure.Models;
 global using System.Security.Claims;
 global using Infrastructure.Context;
 global using Application.AppConfigs;
 global using System.Threading.Tasks;
+global using Common.Requests.Identity;
+global using Common.Responses.Identity;
 global using Common.Responses.Wrappers;
 global using System.Collections.Generic;
 global using System.Security.Cryptography;
@@ -23,3 +25,7 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+
+global using Infrastructure.Services;
+global using Infrastructure.Services.Identity;

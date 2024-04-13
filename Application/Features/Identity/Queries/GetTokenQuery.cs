@@ -1,6 +1,4 @@
-﻿using Common.Requests.Identity;
-
-namespace Application.Features.Identity.Queries;
+﻿namespace Application.Features.Identity.Queries;
 
 public class GetTokenQuery: IRequest<IResponseWrapper>
 {

@@ -1,8 +1,4 @@
-﻿using Application.Services;
-using Common.Responses.Employee;
-using System.Collections.Generic;
-
-namespace Application.Features.Employees.Queries;
+﻿namespace Application.Features.Employees.Queries;
 
 public class GetEmployeesQuery : IRequest<IResponseWrapper>
 {

@@ -1,14 +1,10 @@
-﻿using Domain;
-using System.Collections.Generic;
+﻿namespace Application.Services;
 
-namespace Application.Services
+public interface IEmployeeService
 {
-    public interface IEmployeeService
-    {
-        Task<Employee> CreateEmployeeAsync(Employee employee);
-        Task<Employee> UpdateEmployeeAsync(Employee employee);
-        Task<int> DeleteEmployeeAsync(Employee employee);
-        Task<Employee> GetEmployeeByIdAsync(int id);
-        Task<List<Employee>> GetEmployeeListAsync();
-    }
+    Task<Employee> CreateEmployeeAsync(Employee employee);
+    Task<Employee> UpdateEmployeeAsync(Employee employee);
+    Task<int> DeleteEmployeeAsync(Employee employee);
+    Task<Employee> GetEmployeeByIdAsync(int id);
+    Task<List<Employee>> GetEmployeeListAsync();
 }

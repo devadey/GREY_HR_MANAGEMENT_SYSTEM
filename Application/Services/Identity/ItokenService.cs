@@ -1,6 +1,4 @@
-﻿using Common.Requests.Identity;
-
-namespace Application.Services.Identity;
+﻿namespace Application.Services.Identity;
 
 public interface ITokenService
 {

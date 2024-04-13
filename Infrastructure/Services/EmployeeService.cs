@@ -1,6 +1,4 @@
-﻿using Application.Services;
-
-namespace Infrastructure.Services
+﻿namespace Infrastructure.Services
 {
     public class EmployeeService(ApplicationDbContext context) : IEmployeeService
     {

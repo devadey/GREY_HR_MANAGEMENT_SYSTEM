@@ -1,8 +1,4 @@
-﻿using Application.Services;
-using Infrastructure.Services;
-using Infrastructure.Services.Identity;
-
-namespace Infrastructure;
+﻿namespace Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
