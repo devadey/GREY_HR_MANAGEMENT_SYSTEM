@@ -1,8 +1,4 @@
-﻿using Azure.Core;
-using Common.Requests.Identity;
-using Common.Responses.Identity;
-
-namespace Infrastructure.Services.Identity;
+﻿namespace Infrastructure.Services.Identity;
 
 public class UserService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager) : IUserService
 {

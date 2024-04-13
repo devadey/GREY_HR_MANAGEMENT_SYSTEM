@@ -1,6 +1,4 @@
-﻿using Common.Requests.Identity;
-
-namespace Application.Features.Identity.Command;
+﻿namespace Application.Features.Identity.Command;
 
 public class UserRegistrationCommand : IRequest<IResponseWrapper>
 {

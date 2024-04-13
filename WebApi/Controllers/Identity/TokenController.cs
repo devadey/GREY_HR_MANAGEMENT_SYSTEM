@@ -1,9 +1,4 @@
-﻿using Application.Features.Identity.Queries;
-using Application.Services.Identity;
-using Common.Requests.Identity;
-using MediatR;
-
-namespace WebApi.Controllers.Identity;
+﻿namespace WebApi.Controllers.Identity;
 
 
 [Route("api/[controller]")]

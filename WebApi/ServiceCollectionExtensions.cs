@@ -1,21 +1,4 @@
-﻿using Application.AppConfigs;
-using Common.Responses.Wrappers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Net;
-using System.Reflection;
-using System.Security.Claims;
-using System.Text;
-using WebApi.Permissions;
-
-namespace WebApi;
+﻿namespace WebApi;
 
 public static class ServiceCollectionExtensions
 {
