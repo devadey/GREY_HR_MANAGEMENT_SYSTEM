@@ -5,6 +5,60 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
 
+    public async Task<IResponseWrapper> GetUserByIdAsync(string userId)
+    {
+        var userInDb = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
+
+        
+        if (userInDb is not null)
+        {
+            var mappedUser = new UserResponse
+            {
+                UserName = userInDb.UserName,
+                FirstName = userInDb.FirstName,
+                LastName = userInDb.LastName,
+                PhoneNumber = userInDb.PhoneNumber,
+                Email = userInDb.Email,
+                IsActive = userInDb.IsActive,
+                EmailConfirmed = userInDb.EmailConfirmed,
+            };
+
+            return await ResponseWrapper<UserResponse>.SuccessAsync(mappedUser);
+        }
+
+        return await ResponseWrapper<string>.FailAsync("User does not exist.");
+    }
+
+
+    public async Task<IResponseWrapper> GetAllUsersAsync()
+    {
+        var userResult = await _userManager.Users.ToListAsync();
+
+
+        if (userResult is not null)
+        {
+            var mappedUser = new List<UserResponse>();
+            foreach (var user in userResult)
+            {
+                
+                var newUser = new UserResponse
+                {
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    Email = user.Email,
+                    IsActive = user.IsActive,
+                    EmailConfirmed = user.EmailConfirmed,
+                };
+                mappedUser.Add(newUser);
+            }
+            return await ResponseWrapper<List<UserResponse>>.SuccessAsync(mappedUser);
+        }
+
+        return await ResponseWrapper<string>.FailAsync("No result found.");
+    }
+
     public async Task<IResponseWrapper> ResgisterUserAsync(UserRegistrationRequest request)
     {
         var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
