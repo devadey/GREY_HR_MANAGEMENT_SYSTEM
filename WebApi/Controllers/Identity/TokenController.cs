@@ -1,4 +1,6 @@
-﻿namespace WebApi.Controllers.Identity;
+﻿using Common.Requests.Identity.Token;
+
+namespace WebApi.Controllers.Identity;
 
 
 [Route("api/[controller]")]

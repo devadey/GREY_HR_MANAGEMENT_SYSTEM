@@ -1,5 +1,4 @@
-﻿
-namespace Application.Features.Identity.Queries;
+﻿namespace Application.Features.Identity.Users.Queries;
 
 public class GetUserByIdQuery : IRequest<IResponseWrapper>
 {
@@ -12,7 +11,7 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, IRespon
 
     public GetUserByIdQueryHandler(IUserService userService)
     {
-        this._userService = userService;
+        _userService = userService;
     }
     public async Task<IResponseWrapper> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {

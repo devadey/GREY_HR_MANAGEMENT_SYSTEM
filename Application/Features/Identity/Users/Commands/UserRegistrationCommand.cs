@@ -1,4 +1,6 @@
-﻿namespace Application.Features.Identity.Command;
+﻿using Common.Requests.Identity.Users;
+
+namespace Application.Features.Identity.Users.Commands;
 
 public class UserRegistrationCommand : IRequest<IResponseWrapper>
 {

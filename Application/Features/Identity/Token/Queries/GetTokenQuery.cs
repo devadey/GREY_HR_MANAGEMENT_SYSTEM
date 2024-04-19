@@ -1,6 +1,8 @@
-﻿namespace Application.Features.Identity.Queries;
+﻿using Common.Requests.Identity.Token;
 
-public class GetTokenQuery: IRequest<IResponseWrapper>
+namespace Application.Features.Identity.Token.Queries;
+
+public class GetTokenQuery : IRequest<IResponseWrapper>
 {
     public TokenRequest TokenRequest { get; set; }
 }
@@ -11,7 +13,7 @@ public class GetTokenQueryHandler : IRequestHandler<GetTokenQuery, IResponseWrap
 
     public GetTokenQueryHandler(ITokenService tokenService)
     {
-        this._tokenService = tokenService;
+        _tokenService = tokenService;
     }
     public async Task<IResponseWrapper> Handle(GetTokenQuery request, CancellationToken cancellationToken)
     {
