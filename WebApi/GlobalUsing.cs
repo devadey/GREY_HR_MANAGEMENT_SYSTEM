@@ -15,8 +15,9 @@ global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.Extensions.DependencyInjection;
 
 
-global using Application.Features.Identity.Command;
-global using Application.Features.Identity.Queries;
+global using Application.Features.Identity.Users.Commands;
+global using Application.Features.Identity.Users.Queries;
+global using Application.Features.Identity.Token.Queries;
 global using Application.Services.Identity;
 global using Common.Requests.Identity;
 global using MediatR;

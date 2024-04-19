@@ -1,4 +1,6 @@
-﻿namespace WebApi.Controllers.Identity;
+﻿using Common.Requests.Identity.Users;
+
+namespace WebApi.Controllers.Identity;
 
 [Route("api/[controller]")]
 public class UsersController : BaseController<UsersController>
@@ -42,6 +44,42 @@ public class UsersController : BaseController<UsersController>
     public async Task<IActionResult> GetAllUsers()
     {
         var response = await _sender.Send(new GetAllUsersQuery());
+
+        if (response.IsSuccessful)
+        {
+            return Ok(response);
+        }
+        return BadRequest(response);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateUser(UpdateUserRequest updateUserRequest)
+    {
+        var response = await _sender.Send(new UpdateuserCommand { UpdateUserRequest = updateUserRequest });
+
+        if (response.IsSuccessful)
+        {
+            return Ok(response);
+        }
+        return BadRequest(response);
+    }
+
+    [HttpPut("change-password")]
+    public async Task<IActionResult> ChangeUserPassword(ChangePasswordRequest changePasswordRequest)
+    {
+        var response = await _sender.Send(new ChangeUserPasswordCommand { ChangePasswordRequest = changePasswordRequest });
+
+        if (response.IsSuccessful)
+        {
+            return Ok(response);
+        }
+        return BadRequest(response);
+    }
+
+    [HttpPut("change-status")]
+    public async Task<IActionResult> ChangeUserStatus(ChangeUserStatusRequest changeUserStatusRequest)
+    {
+        var response = await _sender.Send(new ChangeUserStatusCommand { ChangeUserStatusRequest = changeUserStatusRequest });
 
         if (response.IsSuccessful)
         {

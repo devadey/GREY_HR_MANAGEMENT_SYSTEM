@@ -1,9 +1,10 @@
-﻿
-namespace Application.Features.Identity.Queries;
+﻿using Common.Requests.Identity.Token;
 
-public class GetRefreshTokenQuery:IRequest<IResponseWrapper>
+namespace Application.Features.Identity.Token.Queries;
+
+public class GetRefreshTokenQuery : IRequest<IResponseWrapper>
 {
-    public RefreshTokenRequest RefreshTokenRequest { get; set;}
+    public RefreshTokenRequest RefreshTokenRequest { get; set; }
 }
 
 public class GetRefreshTokenQueryHandler : IRequestHandler<GetRefreshTokenQuery, IResponseWrapper>
@@ -12,7 +13,7 @@ public class GetRefreshTokenQueryHandler : IRequestHandler<GetRefreshTokenQuery,
 
     public GetRefreshTokenQueryHandler(ITokenService tokenService)
     {
-        this._tokenService = tokenService;
+        _tokenService = tokenService;
     }
 
     public async Task<IResponseWrapper> Handle(GetRefreshTokenQuery request, CancellationToken cancellationToken)
