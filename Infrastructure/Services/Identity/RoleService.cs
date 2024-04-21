@@ -115,18 +115,7 @@ public class RoleService : IRoleService
         return await ResponseWrapper.FailAsync("Role does not exist.");    
     }
 
-    private List<string> GetIdentityResultErrorDescription(IdentityResult identityResult)
-    {
-        var errorDescription = new List<string>();
-
-        foreach (var error in identityResult.Errors)
-        {
-            errorDescription.Add(error.Description);
-        }
-
-        return errorDescription;
-    }
-
+    
     public async Task<IResponseWrapper> TokenRequests(string roleId)
     {
         var roleInDb = await _roleManager.FindByIdAsync(roleId);
@@ -149,5 +138,17 @@ public class RoleService : IRoleService
         }
 
         return await ResponseWrapper.FailAsync("Role does not exist.");
-}
+    }
+
+    private List<string> GetIdentityResultErrorDescription(IdentityResult identityResult)
+    {
+        var errorDescription = new List<string>();
+
+        foreach (var error in identityResult.Errors)
+        {
+            errorDescription.Add(error.Description);
+        }
+
+        return errorDescription;
+    }
 }

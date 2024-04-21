@@ -13,6 +13,6 @@ public class UserRegistrationCommandHandler(IUserService userService) : IRequest
 
     public Task<IResponseWrapper> Handle(UserRegistrationCommand request, CancellationToken cancellationToken)
     {
-        return _userService.ResgisterUserAsync(request.UserRegistrationRequest);
+        return _userService.RegisterUserAsync(request.UserRegistrationRequest);
     }
 }
