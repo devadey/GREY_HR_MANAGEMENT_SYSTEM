@@ -1,19 +1,21 @@
 ﻿using Common.Requests.Identity.Roles;
 using Common.Requests.Identity.Users;
 using Common.Responses.Identity.Users;
+using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Services.Identity;
 
-public class UserService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager) : IUserService
+public class UserService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ICurrentUserService currentUserService) : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
+    private readonly ICurrentUserService _currentUserService = currentUserService;
 
     public async Task<IResponseWrapper> GetUserByIdAsync(string userId)
     {
         var userInDb = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
 
-        
+
         if (userInDb is not null)
         {
             var mappedUser = new UserResponse
@@ -43,7 +45,7 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
             var mappedUser = new List<UserResponse>();
             foreach (var user in userResult)
             {
-                
+
                 var newUser = new UserResponse
                 {
                     UserId = user.Id,
@@ -84,7 +86,7 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
             return await ResponseWrapper.FailAsync("Username already taken.");
         }
 
-        
+
         var newUser = new ApplicationUser
         {
             FirstName = request.FirstName,
@@ -169,8 +171,8 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
         if (userinDb is null)
         {
             return await ResponseWrapper<UserResponse>.FailAsync("user does not exist.");
-        } 
-        if(userinDb.IsActive == false)
+        }
+        if (userinDb.IsActive == false)
         {
             return await ResponseWrapper<UserResponse>.FailAsync("Opps.....This user is not active.");
         }
@@ -229,7 +231,8 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
             if (userInDb.IsActive == true)
             {
                 userStatus = "ACTIVATED";
-            } else
+            }
+            else
             {
                 userStatus = "DEACTIVATED";
             }
@@ -257,7 +260,7 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
         if (userInDb is not null)
         {
             var allRoles = await _roleManager.Roles.ToListAsync();
-            
+
             foreach (var role in allRoles)
             {
                 var userRoleVM = new UserRoleViewModel
@@ -276,14 +279,48 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
 
                 userRolesVM.Add(userRoleVM);
             }
-            return await ResponseWrapper<List<UserRoleViewModel>>.SuccessAsync(userRolesVM);          
+            return await ResponseWrapper<List<UserRoleViewModel>>.SuccessAsync(userRolesVM);
         }
         return await ResponseWrapper.FailAsync("User does not exist.");
     }
 
-    public Task<IResponseWrapper> UpdateUserRolesAsync(UpdateUserRoleRequest request)
+    public async Task<IResponseWrapper> UpdateUserRolesAsync(UpdateUserRoleRequest request)
     {
-        throw new NotImplementedException();
+        var userInDb = await _userManager.FindByIdAsync(request.UserId);
+
+        if (userInDb is not null)
+        {
+            if (userInDb.Email == AppCredentials.Email)
+            {
+                return await ResponseWrapper.FailAsync("Cannot perform an update on this user.");
+            }
+
+            var currentlyAssinedRoles = await _userManager.GetRolesAsync(userInDb);
+            var rolesToBeAssigned = request.Roles.Where(role => role.IsAssignedToUser is not false).ToList();
+
+            var currentLoggedInUser = await _userManager.FindByIdAsync(_currentUserService.UserId);
+            if (currentLoggedInUser is null)
+            {
+                return await ResponseWrapper.FailAsync("User does not exist.");
+            }
+
+            if (await _userManager.IsInRoleAsync(currentLoggedInUser, AppRoles.Admin))
+            {
+                var identityResult = await _userManager.RemoveFromRolesAsync(userInDb, currentlyAssinedRoles);
+                if (identityResult.Succeeded)
+                {
+                    var identityResult2 = await _userManager.AddToRolesAsync(userInDb, rolesToBeAssigned.Select(role => role.RoleName));
+                    if (identityResult2.Succeeded)
+                    {
+                        return await ResponseWrapper<string>.SuccessAsync("User roles updated successfully.");
+                    }
+                    return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult2));
+                }
+                return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
+            }
+            return await ResponseWrapper.FailAsync("User not authorized for this operation.");
+        }
+        return await ResponseWrapper.FailAsync("User does not exist.");
     }
 
 
