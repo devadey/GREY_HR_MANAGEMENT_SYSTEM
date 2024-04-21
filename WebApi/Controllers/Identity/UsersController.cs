@@ -87,4 +87,15 @@ public class UsersController : BaseController<UsersController>
         }
         return BadRequest(response);
     }
+
+    [HttpGet("roles/{userId}")]
+    public async Task<IActionResult> GetUserRoles(string userId)
+    {
+        var response = await _sender.Send(new GetUserRolesQuery { UserId = userId });
+        if (response.IsSuccessful)
+        {
+            return Ok(response);
+        }
+        return NotFound(response);
+    }
 }

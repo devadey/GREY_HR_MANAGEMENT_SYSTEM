@@ -1,4 +1,5 @@
-﻿using Common.Requests.Identity.Users;
+﻿using Common.Requests.Identity.Roles;
+using Common.Requests.Identity.Users;
 using Common.Responses.Identity.Users;
 
 namespace Infrastructure.Services.Identity;
@@ -32,7 +33,6 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
         return await ResponseWrapper<string>.FailAsync("User does not exist.");
     }
 
-
     public async Task<IResponseWrapper> GetAllUsersAsync()
     {
         var userResult = await _userManager.Users.ToListAsync();
@@ -46,6 +46,7 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
                 
                 var newUser = new UserResponse
                 {
+                    UserId = user.Id,
                     UserName = user.UserName,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
@@ -62,7 +63,7 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
         return await ResponseWrapper<string>.FailAsync("No result found.");
     }
 
-    public async Task<IResponseWrapper> ResgisterUserAsync(UserRegistrationRequest request)
+    public async Task<IResponseWrapper> RegisterUserAsync(UserRegistrationRequest request)
     {
         if (request.ConfirmPassword != request.Password)
         {
@@ -121,7 +122,7 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
             return await ResponseWrapper<UserResponse>.SuccessAsync(mappedUser, "User registered successfully.");
         };
 
-        return await ResponseWrapper<string>.FailAsync("Username registration failed.");
+        return await ResponseWrapper<string>.FailAsync(GetIdentityResultErrorDescriptions(userResult));
     }
 
     public async Task<IResponseWrapper> UpdateUserAsync(UpdateUserRequest request)
@@ -155,7 +156,7 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
             return await ResponseWrapper<UserResponse>.SuccessAsync(updatedUser, "User details has been successfully updated.");
         }
 
-        return await ResponseWrapper<UserResponse>.FailAsync("Error occurred the user details.");
+        return await ResponseWrapper<UserResponse>.FailAsync(GetIdentityResultErrorDescriptions(updatedResult));
 
 
     }
@@ -201,7 +202,7 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
 
             return await ResponseWrapper.SuccessAsync($"{mappedUser.UserName} password has successfully been changed.");
         }
-        return await ResponseWrapper.FailAsync("Error occurred and couldn't complete the task.");
+        return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(updateResult));
     }
 
     public async Task<IResponseWrapper> ChangeUserStatusAsync(ChangeUserStatusRequest request)
@@ -246,6 +247,58 @@ public class UserService(UserManager<ApplicationUser> userManager, RoleManager<A
 
             return await ResponseWrapper<UserResponse>.SuccessAsync(newUser, $"{userInDb.UserName} has been successfully {userStatus}.");
         }
-        return await ResponseWrapper.FailAsync("User status could not be changed");
+        return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(userResult));
     }
+
+    public async Task<IResponseWrapper> GetUserRolesAsync(string userId)
+    {
+        var userRolesVM = new List<UserRoleViewModel>();
+        var userInDb = await _userManager.FindByIdAsync(userId);
+        if (userInDb is not null)
+        {
+            var allRoles = await _roleManager.Roles.ToListAsync();
+            
+            foreach (var role in allRoles)
+            {
+                var userRoleVM = new UserRoleViewModel
+                {
+                    RoleName = role.Name,
+                    RoleDescription = role.Description,
+                };
+                if (await _userManager.IsInRoleAsync(userInDb, role.Name))
+                {
+                    userRoleVM.IsAssignedToUser = true;
+                }
+                else
+                {
+                    userRoleVM.IsAssignedToUser = false;
+                }
+
+                userRolesVM.Add(userRoleVM);
+            }
+            return await ResponseWrapper<List<UserRoleViewModel>>.SuccessAsync(userRolesVM);          
+        }
+        return await ResponseWrapper.FailAsync("User does not exist.");
+    }
+
+    public Task<IResponseWrapper> UpdateUserRolesAsync(UpdateUserRoleRequest request)
+    {
+        throw new NotImplementedException();
+    }
+
+
+
+
+
+    private List<string> GetIdentityResultErrorDescriptions(IdentityResult identityResult)
+    {
+        var errorDescriptions = new List<string>();
+        foreach (var error in identityResult.Errors)
+        {
+            errorDescriptions.Add(error.Description);
+        }
+        return errorDescriptions;
+    }
+
+
 }
