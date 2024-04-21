@@ -1,4 +1,5 @@
-﻿using Common.Requests.Identity.Users;
+﻿using Common.Requests.Identity.Roles;
+using Common.Requests.Identity.Users;
 
 namespace WebApi.Controllers.Identity;
 
@@ -55,7 +56,7 @@ public class UsersController : BaseController<UsersController>
     [HttpPut]
     public async Task<IActionResult> UpdateUser(UpdateUserRequest updateUserRequest)
     {
-        var response = await _sender.Send(new UpdateuserCommand { UpdateUserRequest = updateUserRequest });
+        var response = await _sender.Send(new UpdateUserCommand { UpdateUserRequest = updateUserRequest });
 
         if (response.IsSuccessful)
         {
@@ -97,5 +98,17 @@ public class UsersController : BaseController<UsersController>
             return Ok(response);
         }
         return NotFound(response);
+    }
+
+    [HttpPut("user-roles")]
+    public async Task<IActionResult> UpdateUserRoles(UpdateUserRoleRequest updateUserRoleRequest)
+    {
+        var response = await _sender.Send(new UpdateUserRolesCommand { UpdateUserRoleRequest = updateUserRoleRequest });
+
+        if (response.IsSuccessful)
+        {
+            return Ok(response);
+        }
+        return BadRequest(response);
     }
 }
