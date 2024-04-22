@@ -59,4 +59,43 @@ public class RolesController : BaseController<RolesController>
         }
         return BadRequest(response);
     }
+
+    [HttpDelete]
+    [MustHavePermission(AppFeature.RoleClaims, AppAction.Delete)]
+    public async Task<IActionResult> DeleteRole(string roleId)
+    {
+        var response = await _sender.Send(new DeleteRoleCommand { RoleId = roleId });
+        if (response.IsSuccessful)
+        {
+            return Ok(response);
+        }
+        return NotFound(response);
+    }
+
+    [HttpGet("permissions/{roleId}")]
+    [MustHavePermission(AppFeature.RoleClaims, AppAction.Read)]
+    public async Task<IActionResult> GetPermissions(string roleId)
+    {
+        var response = await _sender.Send(new GetPermissionsQuery { RoleId = roleId });
+        if (response.IsSuccessful)
+        {
+            return Ok(response);
+        }
+        return NotFound(response);
+
+    }
+
+
+    [HttpPut("update-permissions")]
+    [MustHavePermission(AppFeature.RoleClaims, AppAction.Update)]
+    public async Task<IActionResult> GetPermissions(UpdateRolePermissionRequest updateRolePermissionRequest)
+    {
+        var response = await _sender.Send(new UpdateRolesPermissionCommand { UpdateRolePermissionRequest = updateRolePermissionRequest });
+        if (response.IsSuccessful)
+        {
+            return Ok(response);
+        }
+        return NotFound(response);
+
+    }
 }

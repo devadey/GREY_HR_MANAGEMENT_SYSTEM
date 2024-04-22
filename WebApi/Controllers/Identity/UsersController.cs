@@ -17,6 +17,7 @@ public class UsersController : BaseController<UsersController>
 
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationRequest request)
     {
         var response = await _sender.Send(new UserRegistrationCommand { UserRegistrationRequest = request });
@@ -30,6 +31,7 @@ public class UsersController : BaseController<UsersController>
 
 
     [HttpGet("{userId}")]
+    [MustHavePermission(AppFeature.Users, AppAction.Read)]
     public async Task<IActionResult> GetUserById([FromRoute] string userId)
     {
         var response = await _sender.Send(new GetUserByIdQuery { UserId = userId });
@@ -42,6 +44,7 @@ public class UsersController : BaseController<UsersController>
     }
 
     [HttpGet]
+    [MustHavePermission(AppFeature.Users, AppAction.Read)]
     public async Task<IActionResult> GetAllUsers()
     {
         var response = await _sender.Send(new GetAllUsersQuery());
@@ -54,6 +57,7 @@ public class UsersController : BaseController<UsersController>
     }
 
     [HttpPut]
+    [MustHavePermission(AppFeature.Users, AppAction.Update)]
     public async Task<IActionResult> UpdateUser(UpdateUserRequest updateUserRequest)
     {
         var response = await _sender.Send(new UpdateUserCommand { UpdateUserRequest = updateUserRequest });
@@ -66,6 +70,7 @@ public class UsersController : BaseController<UsersController>
     }
 
     [HttpPut("change-password")]
+    [AllowAnonymous]
     public async Task<IActionResult> ChangeUserPassword(ChangePasswordRequest changePasswordRequest)
     {
         var response = await _sender.Send(new ChangeUserPasswordCommand { ChangePasswordRequest = changePasswordRequest });
@@ -78,6 +83,7 @@ public class UsersController : BaseController<UsersController>
     }
 
     [HttpPut("change-status")]
+    [MustHavePermission(AppFeature.Users, AppAction.Update)]
     public async Task<IActionResult> ChangeUserStatus(ChangeUserStatusRequest changeUserStatusRequest)
     {
         var response = await _sender.Send(new ChangeUserStatusCommand { ChangeUserStatusRequest = changeUserStatusRequest });
@@ -90,6 +96,7 @@ public class UsersController : BaseController<UsersController>
     }
 
     [HttpGet("roles/{userId}")]
+    [MustHavePermission(AppFeature.Roles, AppAction.Read)]
     public async Task<IActionResult> GetUserRoles(string userId)
     {
         var response = await _sender.Send(new GetUserRolesQuery { UserId = userId });
@@ -101,6 +108,7 @@ public class UsersController : BaseController<UsersController>
     }
 
     [HttpPut("user-roles")]
+    [MustHavePermission(AppFeature.Roles, AppAction.Update)]
     public async Task<IActionResult> UpdateUserRoles(UpdateUserRoleRequest updateUserRoleRequest)
     {
         var response = await _sender.Send(new UpdateUserRolesCommand { UpdateUserRoleRequest = updateUserRoleRequest });

@@ -8,4 +8,7 @@ public interface IRoleService
     Task<IResponseWrapper> GetRolesAsync();
     Task<IResponseWrapper> UpdateRoleAsync(UpdateRoleRequest request);
     Task<IResponseWrapper> GetRoleByIdAsync(string id);
+    Task<IResponseWrapper> DeleteRoleAsync(string roleId);
+    Task<IResponseWrapper> GetPermissionsAsync(string roleId);
+    Task<IResponseWrapper> UpdateRolePermissionsAsync(UpdateRolePermissionRequest request);
 }
